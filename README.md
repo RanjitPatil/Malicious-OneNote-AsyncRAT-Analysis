@@ -16,6 +16,8 @@ Security Researchers discovered that Threat actors now using OneNote attachments
 
 ![image](https://user-images.githubusercontent.com/43460691/216254324-951b4861-e580-4d77-901c-fcd8cbf620c5.png)
 
+## Dump OneNote File
+
 - There is an awesome tool created by Didier Stevens to dump content from the OneNote file. Check the below output. OneNote file containing two PNG and one HTA file.
 
 > ***`REMnux: python3 onedump.py "file name"`***
@@ -32,6 +34,8 @@ Security Researchers discovered that Threat actors now using OneNote attachments
 - The second  ExecuteCmdAsync  downloading sky.bat file and writing on disk in tmp folder as system32.bat and execute.
 
 ![image](https://user-images.githubusercontent.com/43460691/216255016-54797b05-27ba-493d-8e14-b21d702ee5a7.png)
+
+## Strings Check
 
 - HTA file is not obfuscated and we can see file in Strings output as well.
 
@@ -81,6 +85,8 @@ AutoOpen
 remnux@remnux:~/Downloads$ 
 ```
 
+## Second Stage Payload
+
 - System32.bat file is obfuscated, Lot of environment variables are created and concatenated to build commands. If it's difficult to read, it's easy to deobfuscate. Just add a "echo" at the beginning of all lines at the bottom of the file and execute it or you can use Procmon tool to PowerShell executed command.
 
 ![image](https://user-images.githubusercontent.com/43460691/216255585-757086c3-90c7-40c2-88ed-97b47c3df79d.png)
@@ -125,12 +131,25 @@ $PtfdQ.Invoke($null, (, [string[]] ('')))
 ![image](https://user-images.githubusercontent.com/43460691/216255789-c6e19f63-9991-4a34-b805-3de608cc2353.png)
 ```
 
+## Payload Extraction 
+
 -The payload is AES encrypted, you can see AES keys in deobfuscated script. We will use these keys to decrypt payload.
 
 ![image](https://user-images.githubusercontent.com/43460691/216255929-d279b878-b913-498a-a7e7-cfdaed87335a.png)
 
 
 ![image](https://user-images.githubusercontent.com/43460691/216255962-7725f621-9a49-4b2e-94eb-8fb784d93142.png)
+
+
+## References :
+
+- https://www.bleepingcomputer.com/news/security/hackers-now-use-microsoft-onenote-attachments-to-spread-malware/
+
+- https://fourcore.io/blogs/hackers-using-microsoft-onenote-attachments-to-spread-malware
+
+- https://blog.didierstevens.com/2023/01/22/new-tool-onedump-py/
+
+- https://gchq.github.io/CyberChef/
 
 
 
