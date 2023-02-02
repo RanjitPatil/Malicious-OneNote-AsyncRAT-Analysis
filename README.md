@@ -99,7 +99,8 @@ remnux@remnux:~/Downloads$
 
 - Capture the process ecexution using Procmon, If you open the process start operation you can see the deobfuscated command.
 
-![image](https://user-images.githubusercontent.com/43460691/216255614-c01cdf36-c1db-4a3d-a6a0-74900ae66888.png)
+![image](https://user-images.githubusercontent.com/43460691/216359119-9be8ed37-8a16-4924-8dcc-ae34e2c52d8a.png)
+
 
 - This script is a dropper. You can see base64 encoded payload is located in the file and read by PowerShell. Payload is identified by lines starting with **":: ".** 
 
