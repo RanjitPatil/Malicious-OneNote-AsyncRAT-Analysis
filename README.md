@@ -95,6 +95,8 @@ remnux@remnux:~/Downloads$
 
 - Just add a "echo" at the beginning of all lines at the bottom of the file and execute it or you can use Procmon tool to PowerShell executed command.
 
+> **SHA256:** d329a265d4005b2cb8902d6148ff5e4477f2203bc2e476e51e5895f9be99c53e
+
 ![image](https://user-images.githubusercontent.com/43460691/216255585-757086c3-90c7-40c2-88ed-97b47c3df79d.png)
 
 - Capture the process ecexution using Procmon, If you open the process start operation you can see the deobfuscated command.
