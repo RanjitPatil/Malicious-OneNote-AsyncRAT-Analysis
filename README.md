@@ -8,6 +8,8 @@ Security Researchers discovered that Threat actors now using OneNote attachments
 
 > **SHA256:** 15212428deeeabcd5b11a1b8383c654476a3ea1b19b804e4aca606fac285387f
 
+## Basic Static Analysis
+
 - Attackers sending OneNote file as an attachment using email and using simple trick to hide suspicious script. 
 
 - The suspicious VBS macro linked to the "Click to view document" PNG picture is just behind this picture.  
@@ -149,6 +151,9 @@ $PtfdQ.Invoke($null, (, [string[]] ('')))
 - The decrypted PE file is an ASyncRAT. Check the below file hash.
 
 > **SHA256:** f8b823dc5519d25ef2599725c25306171a8496069b1ba56cb854323ae98d10d1
+
+![image](https://user-images.githubusercontent.com/43460691/216351747-ae3a9ad8-3518-462d-887b-86fe524c28fa.png)
+
 
 ## YARA Rule
 
